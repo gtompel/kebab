@@ -3,6 +3,7 @@
 
 + install
 ```jsx
+
 npm install appwrite
 
 import { Client } from 'appwrite';
