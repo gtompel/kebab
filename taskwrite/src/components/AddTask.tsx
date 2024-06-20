@@ -4,6 +4,8 @@ import Button from "./Button";
 import { useNavigate } from "react-router-dom";
 import { IPayload, ITask } from "../models/interface";
 import { createDocument } from "../utils/db";
+import Speaker from "./Speaker";
+import { useSpeechToTextHelper } from "../hooks/useSpeechToTextHelper";
 
 
 interface ITaskFormProps {
@@ -24,18 +26,19 @@ const AddTask = ({ task, isEdit, setTask }: ITaskFormProps) => {
     );
 
     const navigate = useNavigate();
-    
-const [isSubmitting, setIsSubmitting] = useState(false);
-const [titleValidationError, setTitleValidationError] = useState("");
+    const { transcript, resetTranscript } = useSpeechToTextHelper();
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [titleValidationError, setTitleValidationError] = useState("");
 
 useEffect(() => {
-    if (isEdit && task) {
+    if (isEdit && task &&!transcript) {
         setTitleVal(task.title);
         setTextAreaVal(task.description);
     } else {
-    	setTitleVal("");
+    	setTitleVal(transcript || "");
     }
-}, [isEdit, task, setTask]);
+}, [isEdit, task, transcript, setTask]);
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitleVal(e.target.value);
@@ -44,6 +47,9 @@ useEffect(() => {
 			setTitleValidationError("");
 		}
 	};
+    const clearTranscript = () => {
+        resetTranscript();
+    };
 
 	const handleSubmitTask = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -93,7 +99,10 @@ useEffect(() => {
 	return (
         <form id="form" onSubmit={handleSubmitTask} className="m-8">
             <div className="flex flex-col mb-6">
-                <label htmlFor="title">Task Title</label>
+            <div className="flex flex-row justify-between items-center">
+					<label htmlFor="title">Task Title</label>
+					<Speaker handleClear={clearTranscript} />
+				</div>
                 <input
                     type="text"
                     id="title"
