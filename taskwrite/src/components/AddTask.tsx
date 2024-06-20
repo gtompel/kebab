@@ -35,7 +35,7 @@ useEffect(() => {
     } else {
     	setTitleVal("");
     }
-}, [isEdit, task]);
+}, [isEdit, task, setTask]);
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitleVal(e.target.value);
